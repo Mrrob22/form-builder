@@ -1,0 +1,40 @@
+{
+  "name": "form-builder",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/seed.ts"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "graphql": "^16.11.0",
+    "graphql-type-json": "^0.3.2",
+    "graphql-yoga": "^5.16.0",
+    "jose": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "next": "15.5.6",
+    "next-auth": "^4.24.11",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "uuid": "^13.0.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.19.22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.6",
+    "typescript": "^5"
+  }
+}
