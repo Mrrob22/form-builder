@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 export default function Client({ form }: any) {
     const [fields, setFields] = useState<any[]>(form.fields ?? []);
     const [selected, setSelected] = useState<string | undefined>();
+    const selectedField = fields.find((f) => f.id === selected);
 
     const upsert = (patch: any) =>
         setFields((prev) => prev.map((f) => (f.id === patch.id ? patch : f)));
@@ -56,6 +57,56 @@ export default function Client({ form }: any) {
         alert('Опубліковано');
     };
 
+    const onAiAddAction = async () => {
+        const p = window.prompt('Опиши поле (напр.: "Додай поле для телефону, обов’язкове")');
+        if (!p) return;
+        try {
+            const res = await fetch('/api/ai/agent', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: p,
+                    mode: 'add',
+                    context: { fields },
+                }),
+            });
+            const data = await res.json();
+            if (data.field) setFields((prev) => [...prev, data.field]);
+            else if (data.fields?.length) setFields((prev) => [...prev, ...data.fields]);
+            else alert('AI не повернув поле');
+        } catch (e) {
+            console.error(e);
+            alert('Помилка AI');
+        }
+    };
+
+    const onAiEditAction = async () => {
+        if (!selectedField) return alert('Оберіть поле для редагування');
+        const p = window.prompt('Опиши зміну (напр.: "Зроби поле повідомлення обов’язковим і 6 рядків")');
+        if (!p) return;
+        try {
+            const res = await fetch('/api/ai/agent', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: p,
+                    mode: 'edit',
+                    field: selectedField,
+                    context: { fields },
+                }),
+            });
+            const data = await res.json();
+            if (data.field) {
+                setFields((prev) => prev.map((f) => (f.id === selectedField.id ? data.field : f)));
+            } else {
+                alert('AI не повернув змінене поле');
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Помилка AI');
+        }
+    };
+
     return (
         <Box display="grid" gridTemplateColumns="1fr 320px" gap={2} p={3}>
             <Box display="grid" gap={2}>
@@ -65,10 +116,13 @@ export default function Client({ form }: any) {
                     onAddTextareaAction={() => add('textarea')}
                     onSaveAction={save}
                     onPublishAction={publish}
+                    onAiAddAction={onAiAddAction}
+                    onAiEditAction={onAiEditAction}
+                    aiEditDisabled={!selectedField}
                 />
                 <EditorCanvas fields={fields} selectedId={selected} onSelectAction={setSelected} />
             </Box>
-            <Sidebar value={fields.find((f) => f.id === selected)} onChangeAction={upsert} />
+            <Sidebar value={selectedField} onChangeAction={upsert} />
         </Box>
     );
 }

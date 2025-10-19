@@ -1,11 +1,15 @@
-import { createSchema, createYoga } from 'graphql-yoga';
-import { NextResponse } from 'next/server';
-import {resolvers} from '@/lib/gql/resolvers';
-import {typeDefs} from '@/lib/gql/schema';
+import { createYoga, createSchema } from 'graphql-yoga';
+import { typeDefs } from '@/lib/gql/schema';
+import { resolvers } from '@/lib/gql/resolvers';
 
-const yoga = createYoga({
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const { handleRequest } = createYoga({
     schema: createSchema({ typeDefs, resolvers }),
     graphqlEndpoint: '/api/graphql',
-    fetchAPI: { Response: NextResponse },
+    maskedErrors: process.env.NODE_ENV === 'production',
+    logging: process.env.NODE_ENV === 'production' ? 'warn' : 'debug',
 });
-export { yoga as GET, yoga as POST };
+
+export { handleRequest as GET, handleRequest as POST };

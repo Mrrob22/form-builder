@@ -1,13 +1,15 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const UserSchema = new Schema({
-    email: { type: String, required: true, unique: true },
-    name: { type: String },
-    passwordHash: { type: String },
-    role: { type: String, enum: ['admin','editor','user'], default: 'user' }
-}, { timestamps: true });
+const UserSchema = new Schema(
+    {
+        email: { type: String, required: true, unique: true, index: true },
+        name: String,
+        role: { type: String, enum: ['admin', 'editor', 'user'], default: 'user' },
+        passwordHash: String,
+        provider: { type: String, default: 'credentials' }, // optional
+    },
+    { timestamps: true }
+);
 
-export type UserDoc = {
-    _id: string; email: string; name?: string; role: 'admin'|'editor'|'user';
-}
-export default models.User || model('User', UserSchema);
+export default (mongoose.models.User as mongoose.Model<any>) ||
+mongoose.model('User', UserSchema);
