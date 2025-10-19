@@ -1,12 +1,12 @@
 'use client';
-import * as React from 'react';
+import {useState} from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import DynamicForm from '@/components/public/DynamicForm';
 import ConfirmDialog from '@/components/public/ConfirmDialog';
 
 export default function Client({ form }: any) {
-    const [values, setValues] = React.useState<Record<string, any>>({});
-    const [open, setOpen] = React.useState(false);
+    const [values, setValues] = useState<Record<string, any>>({});
+    const [open, setOpen] = useState(false);
     const onChange = (name: string, value: any) => setValues((v) => ({ ...v, [name]: value }));
     const onSubmit = () => setOpen(true);
 
